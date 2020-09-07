@@ -12,21 +12,21 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.Priority;
-import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.ParsedRequestListener;
 import com.nazycodes.gads2020leaderboard.R;
 import com.nazycodes.gads2020leaderboard.adapters.LearnersLeadersRecyclerAdapter;
 import com.nazycodes.gads2020leaderboard.models.LearnerLeaderModel;
+import com.nazycodes.gads2020leaderboard.services.LeadersService;
+import com.nazycodes.gads2020leaderboard.services.LeadersServicesBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class LearnersLeadersFragment extends Fragment {
     public static final String TITLE = "Learners Leaders";
-    private static final String API = "https://gadsapi.herokuapp.com/api/hours";
 
     private RecyclerView recyclerView;
     private LearnersLeadersRecyclerAdapter learnersLeadersRecyclerAdapter;
@@ -55,25 +55,23 @@ public class LearnersLeadersFragment extends Fragment {
     private void getData() {
         progressBar.setVisibility(View.VISIBLE);
 
-        AndroidNetworking.get(API)
-                .setTag("production")
-                .setPriority(Priority.LOW)
-                .build()
-                .getAsObjectList(LearnerLeaderModel.class, new ParsedRequestListener<List<LearnerLeaderModel>>() {
-                    @Override
-                    public void onResponse(List<LearnerLeaderModel> learnerLeaderModels) {
-                        // do anything with response
-                        Log.d("Success", "learnerLeaderModelList size : " + learnerLeaderModels.size());
-                        learnerLeaderModelList = learnerLeaderModels;
-                        progressBar.setVisibility(View.INVISIBLE);
-                        loadUI();
-                    }
-                    @Override
-                    public void onError(ANError anError) {
-                        // handle error
-                        Log.e("Error", "onError: " + anError.getMessage());
-                    }
-                });
+        LeadersService leadersService = LeadersServicesBuilder.buildService(LeadersService.class);
+        Call<List<LearnerLeaderModel>> createRequest = leadersService.getAllLearnerLeaders();
+
+        createRequest.enqueue(new Callback<List<LearnerLeaderModel>>() {
+            @Override
+            public void onResponse(Call<List<LearnerLeaderModel>> request, Response<List<LearnerLeaderModel>> response) {
+                Log.d("Success", "learnerLeaderModelList: " + response.body());
+                learnerLeaderModelList = response.body();
+                progressBar.setVisibility(View.INVISIBLE);
+                loadUI();
+            }
+
+            @Override
+            public void onFailure(Call<List<LearnerLeaderModel>> request, Throwable t) {
+                Log.e("Error", "onError: " + t.getMessage());
+            }
+        });
     }
 
     private void loadUI(){

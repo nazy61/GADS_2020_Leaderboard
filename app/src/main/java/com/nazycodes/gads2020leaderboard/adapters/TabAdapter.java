@@ -1,12 +1,11 @@
 package com.nazycodes.gads2020leaderboard.adapters;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.nazycodes.gads2020leaderboard.fragments.LearnersLeadersFragment;
-import com.nazycodes.gads2020leaderboard.fragments.SkillIQLeaders;
+import com.nazycodes.gads2020leaderboard.fragments.SkillIQLeadersFragment;
 
 public class TabAdapter extends FragmentStatePagerAdapter {
 
@@ -23,7 +22,7 @@ public class TabAdapter extends FragmentStatePagerAdapter {
             case 0:
                 return LearnersLeadersFragment.newInstance();
             case 1:
-                return SkillIQLeaders.newInstance();
+                return SkillIQLeadersFragment.newInstance();
         }
         return null;
     }
@@ -40,7 +39,7 @@ public class TabAdapter extends FragmentStatePagerAdapter {
                 return LearnersLeadersFragment.TITLE;
 
             case 1:
-                return SkillIQLeaders.TITLE;
+                return SkillIQLeadersFragment.TITLE;
 
         }
         return super.getPageTitle(position);

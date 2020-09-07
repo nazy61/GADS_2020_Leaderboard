@@ -1,15 +1,37 @@
 package com.nazycodes.gads2020leaderboard.models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class LearnerLeaderModel {
-    final String name;
-    final String country;
-    final String badgeUrl;
-    final int hours;
+    @SerializedName("name")
+    private String name;
+    @SerializedName("country")
+    private String country;
+    @SerializedName("badgeUrl")
+    private String badgeUrl;
+    @SerializedName("hours")
+    private int hours;
 
     public LearnerLeaderModel(String name, String country, String badgeUrl, int hours) {
         this.name = name;
         this.country = country;
         this.badgeUrl = badgeUrl;
+        this.hours = hours;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public void setBadgeUrl(String badgeUrl) {
+        this.badgeUrl = badgeUrl;
+    }
+
+    public void setHours(int hours) {
         this.hours = hours;
     }
 

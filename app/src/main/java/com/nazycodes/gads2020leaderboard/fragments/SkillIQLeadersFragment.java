@@ -12,32 +12,29 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.Priority;
-import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.ParsedRequestListener;
 import com.nazycodes.gads2020leaderboard.R;
-import com.nazycodes.gads2020leaderboard.adapters.LearnersLeadersRecyclerAdapter;
 import com.nazycodes.gads2020leaderboard.adapters.SkillIQLeadersRecyclerAdapter;
-import com.nazycodes.gads2020leaderboard.models.LearnerLeaderModel;
 import com.nazycodes.gads2020leaderboard.models.SkillIQLeaderModel;
-
+import com.nazycodes.gads2020leaderboard.services.LeadersService;
+import com.nazycodes.gads2020leaderboard.services.LeadersServicesBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SkillIQLeaders extends Fragment {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class SkillIQLeadersFragment extends Fragment {
     public static final String TITLE = "Skill IQ Leaders";
-    private static final String API = "https://gadsapi.herokuapp.com/api/skilliq";
 
     private RecyclerView recyclerView;
     private SkillIQLeadersRecyclerAdapter skillIQLeadersRecyclerAdapter;
     private List<SkillIQLeaderModel> skillIQLeaderModelList;
     private ProgressBar progressBar;
 
-    public static SkillIQLeaders newInstance() {
+    public static SkillIQLeadersFragment newInstance() {
 
-        return new SkillIQLeaders();
+        return new SkillIQLeadersFragment();
     }
 
     @Nullable
@@ -58,25 +55,23 @@ public class SkillIQLeaders extends Fragment {
     private void getData() {
         progressBar.setVisibility(View.VISIBLE);
 
-        AndroidNetworking.get(API)
-                .setTag("production")
-                .setPriority(Priority.LOW)
-                .build()
-                .getAsObjectList(SkillIQLeaderModel.class, new ParsedRequestListener<List<SkillIQLeaderModel>>() {
-                    @Override
-                    public void onResponse(List<SkillIQLeaderModel> skillIQLeaderModels) {
-                        // do anything with response
-                        Log.d("Success", "skillIQLeaderModelList size : " + skillIQLeaderModels.size());
-                        skillIQLeaderModelList = skillIQLeaderModels;
-                        progressBar.setVisibility(View.INVISIBLE);
-                        loadUI();
-                    }
-                    @Override
-                    public void onError(ANError anError) {
-                        // handle error
-                        Log.e("Error", "onError: " + anError.getMessage());
-                    }
-                });
+        LeadersService leadersService = LeadersServicesBuilder.buildService(LeadersService.class);
+        Call<List<SkillIQLeaderModel>> createRequest = leadersService.getAllSkillIQLeaders();
+
+        createRequest.enqueue(new Callback<List<SkillIQLeaderModel>>() {
+            @Override
+            public void onResponse(Call<List<SkillIQLeaderModel>> request, Response<List<SkillIQLeaderModel>> response) {
+                Log.d("Success", "skillIQLeaderModelList: " + response.body());
+                skillIQLeaderModelList = response.body();
+                progressBar.setVisibility(View.INVISIBLE);
+                loadUI();
+            }
+
+            @Override
+            public void onFailure(Call<List<SkillIQLeaderModel>> request, Throwable t) {
+                Log.e("Error", "onError: " + t.getMessage());
+            }
+        });
     }
 
     private void loadUI(){
