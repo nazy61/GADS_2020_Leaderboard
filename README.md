@@ -1,8 +1,7 @@
-# diamond_bank_app_clone
-A Research Project Done on Banking Apps
+# GADS 2020 Leaderboard
+An assignment for GADS interns
 
 # Screen Shots
-<img src="images/screenshot.png" width="300" />
-
-# Generated APK
-<a href="https://github.com/nazy61/diamond_bank_app_clone/blob/master/diamond_bank_app_clone.apk" > Sample APK <a/>
+<img src="images/image1.png" width="300" />
+<img src="images/image1.png" width="300" />
+<img src="images/image1.png" width="300" />
